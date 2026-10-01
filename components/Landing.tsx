@@ -235,7 +235,7 @@ export default function Landing() {
             <Link href="/login" className="hover:text-white">Log in</Link>
             <Link href="/register" className="hover:text-white">Register</Link>
             <a
-              href="https://github.com/your-name/expense-tracker"
+              href="https://github.com/Hashim017/expense-tracker"
               target="_blank"
               rel="noreferrer"
               aria-label="GitHub"
