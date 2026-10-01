@@ -40,9 +40,6 @@ type FormState = {
   note: string;
 };
 
-const inputClass =
-  "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200";
-
 export default function TransactionManager({
   transactions,
   categories,
@@ -145,29 +142,28 @@ export default function TransactionManager({
     <div className="mx-auto max-w-4xl space-y-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Transactions</h2>
-          <p className="text-sm text-slate-500">
+          <h2 className="text-2xl font-bold tracking-tight text-white">
+            Transactions
+          </h2>
+          <p className="text-sm text-slate-400">
             Add, edit and delete your income and expenses.
           </p>
         </div>
-        <button
-          onClick={openNew}
-          className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700"
-        >
+        <button onClick={openNew} className="btn-primary flex items-center gap-2">
           <Plus size={16} /> Add transaction
         </button>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <div className="flex rounded-lg bg-slate-200/70 p-1 text-sm">
+        <div className="flex rounded-lg bg-white/5 p-1 text-sm">
           {(["ALL", "INCOME", "EXPENSE"] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
               className={`rounded-md px-3 py-1.5 font-medium capitalize ${
                 filter === f
-                  ? "bg-white text-slate-900 shadow-sm"
-                  : "text-slate-500"
+                  ? "bg-white/10 text-white"
+                  : "text-slate-400 hover:text-slate-200"
               }`}
             >
               {f.toLowerCase()}
@@ -177,30 +173,33 @@ export default function TransactionManager({
         <div className="relative min-w-48 flex-1">
           <Search
             size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
           />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by title"
-            className={`${inputClass} pl-9`}
+            className="input pl-9"
           />
         </div>
       </div>
 
       {visible.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center text-sm text-slate-400">
+        <div className="card border-dashed py-16 text-center text-sm text-slate-500">
           No transactions found.
         </div>
       ) : (
-        <ul className="divide-y divide-slate-100 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <ul className="card divide-y divide-white/5">
           {visible.map((t) => (
-            <li key={t.id} className="flex items-center gap-3 px-4 py-3 sm:px-5">
+            <li
+              key={t.id}
+              className="flex items-center gap-3 px-4 py-3 hover:bg-white/[0.03] sm:px-5"
+            >
               <span
                 className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
                   t.type === "INCOME"
-                    ? "bg-emerald-100 text-emerald-600"
-                    : "bg-rose-100 text-rose-600"
+                    ? "bg-emerald-400/15 text-emerald-300"
+                    : "bg-rose-400/15 text-rose-300"
                 }`}
               >
                 {t.type === "INCOME" ? (
@@ -210,14 +209,14 @@ export default function TransactionManager({
                 )}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="truncate font-medium">{t.title}</p>
+                <p className="truncate font-medium text-slate-100">{t.title}</p>
                 <p className="truncate text-xs text-slate-500">
                   {t.categoryName} · {formatDate(t.date)}
                 </p>
               </div>
               <p
                 className={`font-semibold ${
-                  t.type === "INCOME" ? "text-emerald-600" : "text-rose-600"
+                  t.type === "INCOME" ? "text-emerald-300" : "text-rose-300"
                 }`}
               >
                 {t.type === "INCOME" ? "+" : "-"}
@@ -227,14 +226,14 @@ export default function TransactionManager({
                 <button
                   onClick={() => openEdit(t)}
                   aria-label="Edit"
-                  className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-indigo-600"
+                  className="rounded-lg p-2 text-slate-500 hover:bg-white/10 hover:text-indigo-300"
                 >
                   <Pencil size={16} />
                 </button>
                 <button
                   onClick={() => remove(t.id)}
                   aria-label="Delete"
-                  className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-rose-600"
+                  className="rounded-lg p-2 text-slate-500 hover:bg-white/10 hover:text-rose-300"
                 >
                   <Trash2 size={16} />
                 </button>
@@ -245,23 +244,23 @@ export default function TransactionManager({
       )}
 
       {form && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
           <form
             onSubmit={(e) => {
               e.preventDefault();
               save();
             }}
-            className="w-full max-w-md space-y-4 rounded-2xl bg-white p-6 shadow-xl"
+            className="w-full max-w-md space-y-4 rounded-2xl border border-white/10 bg-slate-900 p-6 shadow-2xl"
           >
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">
+              <h3 className="text-lg font-semibold text-white">
                 {form.id ? "Edit transaction" : "Add transaction"}
               </h3>
               <button
                 type="button"
                 onClick={() => setForm(null)}
                 aria-label="Close"
-                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100"
+                className="rounded-lg p-1 text-slate-400 hover:bg-white/10"
               >
                 <X size={18} />
               </button>
@@ -276,9 +275,9 @@ export default function TransactionManager({
                   className={`rounded-lg border px-3 py-2 text-sm font-medium ${
                     form.type === t
                       ? t === "INCOME"
-                        ? "border-emerald-500 bg-emerald-50 text-emerald-700"
-                        : "border-rose-500 bg-rose-50 text-rose-700"
-                      : "border-slate-300 text-slate-500"
+                        ? "border-emerald-400 bg-emerald-400/10 text-emerald-300"
+                        : "border-rose-400 bg-rose-400/10 text-rose-300"
+                      : "border-white/10 text-slate-400"
                   }`}
                 >
                   {t === "INCOME" ? "Income" : "Expense"}
@@ -287,19 +286,23 @@ export default function TransactionManager({
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium">Title</label>
+              <label className="mb-1 block text-sm font-medium text-slate-300">
+                Title
+              </label>
               <input
                 required
                 maxLength={100}
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
-                className={inputClass}
+                className="input"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="mb-1 block text-sm font-medium">Amount</label>
+                <label className="mb-1 block text-sm font-medium text-slate-300">
+                  Amount
+                </label>
                 <input
                   required
                   type="number"
@@ -307,30 +310,34 @@ export default function TransactionManager({
                   min="0.01"
                   value={form.amount}
                   onChange={(e) => setForm({ ...form, amount: e.target.value })}
-                  className={inputClass}
+                  className="input"
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium">Date</label>
+                <label className="mb-1 block text-sm font-medium text-slate-300">
+                  Date
+                </label>
                 <input
                   required
                   type="date"
                   value={form.date}
                   onChange={(e) => setForm({ ...form, date: e.target.value })}
-                  className={inputClass}
+                  className="input"
                 />
               </div>
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium">Category</label>
+              <label className="mb-1 block text-sm font-medium text-slate-300">
+                Category
+              </label>
               <select
                 required
                 value={form.categoryId}
                 onChange={(e) =>
                   setForm({ ...form, categoryId: e.target.value })
                 }
-                className={inputClass}
+                className="input"
               >
                 {formCategories.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -341,19 +348,19 @@ export default function TransactionManager({
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium">
+              <label className="mb-1 block text-sm font-medium text-slate-300">
                 Note, optional
               </label>
               <input
                 maxLength={250}
                 value={form.note}
                 onChange={(e) => setForm({ ...form, note: e.target.value })}
-                className={inputClass}
+                className="input"
               />
             </div>
 
             {error && (
-              <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-600">
+              <p className="rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-300">
                 {error}
               </p>
             )}
@@ -362,15 +369,11 @@ export default function TransactionManager({
               <button
                 type="button"
                 onClick={() => setForm(null)}
-                className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+                className="rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5"
               >
                 Cancel
               </button>
-              <button
-                type="submit"
-                disabled={saving}
-                className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-60"
-              >
+              <button type="submit" disabled={saving} className="btn-primary">
                 {saving ? "Saving..." : "Save"}
               </button>
             </div>

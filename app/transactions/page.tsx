@@ -1,12 +1,11 @@
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/currentUser";
+import { requireUser } from "@/lib/currentUser";
 import TransactionManager from "@/components/TransactionManager";
 
 export const dynamic = "force-dynamic";
 
 export default async function TransactionsPage() {
-  const user = await getCurrentUser();
-  if (!user) return <p>No user found. Run the seed first.</p>;
+  const user = await requireUser();
 
   const [transactions, categories] = await Promise.all([
     prisma.transaction.findMany({

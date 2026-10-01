@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Wallet, TrendingUp, TrendingDown } from "lucide-react";
-import { getCurrentUser } from "@/lib/currentUser";
+import { requireUser } from "@/lib/currentUser";
 import {
   getTotals,
   getMonthly,
@@ -25,9 +25,7 @@ export default async function ReportsPage({
   const { range } = await searchParams;
   const months = RANGES.includes(Number(range)) ? Number(range) : 6;
 
-  const user = await getCurrentUser();
-  if (!user) return <p>No user found. Run the seed first.</p>;
-
+  const user = await requireUser();
   const start = monthStart(months - 1);
 
   const [totals, monthly, breakdown] = await Promise.all([
@@ -43,20 +41,20 @@ export default async function ReportsPage({
     <div className="mx-auto max-w-6xl space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Reports</h2>
-          <p className="text-sm text-slate-500">
+          <h2 className="text-2xl font-bold tracking-tight text-white">Reports</h2>
+          <p className="text-sm text-slate-400">
             Your income and spending over time.
           </p>
         </div>
-        <div className="flex rounded-lg bg-slate-200/70 p-1 text-sm">
+        <div className="flex rounded-lg bg-white/5 p-1 text-sm">
           {RANGES.map((r) => (
             <Link
               key={r}
               href={`/reports?range=${r}`}
               className={`rounded-md px-3 py-1.5 font-medium ${
                 months === r
-                  ? "bg-white text-slate-900 shadow-sm"
-                  : "text-slate-500"
+                  ? "bg-white/10 text-white"
+                  : "text-slate-400 hover:text-slate-200"
               }`}
             >
               {r} months
@@ -84,7 +82,7 @@ export default async function ReportsPage({
           title="Net savings"
           amount={formatMoney(totals.balance)}
           icon={Wallet}
-          tone="indigo"
+          tone="hero"
           hint={`${savingsRate}% savings rate`}
         />
       </div>
@@ -113,17 +111,17 @@ export default async function ReportsPage({
               {[...monthly].reverse().map((m) => {
                 const net = m.income - m.expense;
                 return (
-                  <tr key={m.month} className="border-t border-slate-100">
-                    <td className="py-3 font-medium">{m.month}</td>
-                    <td className="py-3 text-right text-emerald-600">
+                  <tr key={m.month} className="border-t border-white/5">
+                    <td className="py-3 font-medium text-slate-200">{m.month}</td>
+                    <td className="py-3 text-right text-emerald-300">
                       {formatMoney(m.income)}
                     </td>
-                    <td className="py-3 text-right text-rose-600">
+                    <td className="py-3 text-right text-rose-300">
                       {formatMoney(m.expense)}
                     </td>
                     <td
                       className={`py-3 text-right font-semibold ${
-                        net >= 0 ? "text-slate-900" : "text-rose-600"
+                        net >= 0 ? "text-slate-100" : "text-rose-300"
                       }`}
                     >
                       {formatMoney(net)}

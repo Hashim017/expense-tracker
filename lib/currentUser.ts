@@ -1,6 +1,15 @@
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { readSession } from "@/lib/session";
 
-// Temporary. Stage 5 replaces this with the logged in user.
 export async function getCurrentUser() {
-  return prisma.user.findUnique({ where: { email: "demo@example.com" } });
+  const userId = await readSession();
+  if (!userId) return null;
+  return prisma.user.findUnique({ where: { id: userId } });
+}
+
+export async function requireUser() {
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
+  return user;
 }

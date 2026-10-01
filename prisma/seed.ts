@@ -4,12 +4,14 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-  const existing = await prisma.user.findUnique({
+    const existing = await prisma.user.findUnique({
     where: { email: "demo@example.com" },
   });
   if (existing) {
-    console.log("Seed data already exists");
-    return;
+    await prisma.transaction.deleteMany({ where: { userId: existing.id } });
+    await prisma.category.deleteMany({ where: { userId: existing.id } });
+    await prisma.user.delete({ where: { id: existing.id } });
+    console.log("Old demo data removed");
   }
 
   const user = await prisma.user.create({
