@@ -38,7 +38,7 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
   }
 
   return (
-      <div className="flex min-h-[75vh] items-center justify-center">
+      <div className="flex min-h-[75vh] items-center justify-center  py-10">
       <div className="card w-full max-w-md p-8">
         <div className="mb-6 flex flex-col items-center text-center">
           <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500 text-white shadow-lg shadow-indigo-900/50">
