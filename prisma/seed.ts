@@ -40,7 +40,7 @@ async function main() {
 
   const now = new Date();
   const monthDate = (monthsAgo: number, day: number) =>
-    new Date(now.getFullYear(), now.getMonth() - monthsAgo, day);
+    new Date(Date.UTC(now.getFullYear(), now.getMonth() - monthsAgo, day));
 
   const transactions: {
     title: string;

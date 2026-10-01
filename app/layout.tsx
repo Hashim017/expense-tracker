@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Expense Tracker",
@@ -14,9 +17,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="flex bg-slate-50 text-slate-900">
+      <body
+        className={`${inter.className} min-h-screen bg-slate-50 text-slate-900 md:flex`}
+      >
         <Sidebar />
-        <main className="flex-1 p-6 md:p-8">{children}</main>
+        <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
       </body>
     </html>
   );

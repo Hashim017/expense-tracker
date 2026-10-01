@@ -1,71 +1,145 @@
+import Link from "next/link";
+import {
+  Wallet,
+  TrendingUp,
+  TrendingDown,
+  ArrowUpRight,
+  ArrowDownRight,
+} from "lucide-react";
+import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/currentUser";
+import {
+  getTotals,
+  getMonthly,
+  getCategoryBreakdown,
+  monthStart,
+} from "@/lib/stats";
+import { formatMoney, formatDate } from "@/lib/format";
 import StatCard from "@/components/StatCard";
+import Card from "@/components/Card";
 import SpendingChart from "@/components/SpendingChart";
+import CategoryChart from "@/components/CategoryChart";
 
-const chartData = [
-  { month: "Apr", income: 4200, expense: 2800 },
-  { month: "May", income: 4500, expense: 3100 },
-  { month: "Jun", income: 4300, expense: 2600 },
-  { month: "Jul", income: 4800, expense: 3500 },
-  { month: "Aug", income: 5000, expense: 3200 },
-  { month: "Sep", income: 5200, expense: 3000 },
-];
+export const dynamic = "force-dynamic";
 
-const recent = [
-  { id: 1, title: "Salary", category: "Income", date: "Sep 28", amount: "+$5,200", type: "income" },
-  { id: 2, title: "Groceries", category: "Food", date: "Sep 27", amount: "-$180", type: "expense" },
-  { id: 3, title: "Electricity bill", category: "Utilities", date: "Sep 25", amount: "-$95", type: "expense" },
-  { id: 4, title: "Freelance work", category: "Income", date: "Sep 22", amount: "+$400", type: "income" },
-  { id: 5, title: "Fuel", category: "Transport", date: "Sep 20", amount: "-$60", type: "expense" },
-];
+export default async function DashboardPage() {
+  const user = await getCurrentUser();
+  if (!user) return <p>No user found. Run the seed first.</p>;
 
-export default function DashboardPage() {
+  const start = monthStart(0);
+
+  const [allTime, thisMonth, monthly, breakdown, recent] = await Promise.all([
+    getTotals(user.id),
+    getTotals(user.id, start),
+    getMonthly(user.id, 6),
+    getCategoryBreakdown(user.id, start),
+    prisma.transaction.findMany({
+      where: { userId: user.id },
+      include: { category: true },
+      orderBy: { date: "desc" },
+      take: 6,
+    }),
+  ]);
+
+  const firstName = user.name.split(" ")[0];
+
   return (
-    <div className="mx-auto max-w-6xl">
-      <h2 className="text-2xl font-bold">Dashboard</h2>
-      <p className="mt-1 text-slate-500">Your money at a glance.</p>
-
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <StatCard title="Total Income" amount="$5,600" color="text-emerald-600" />
-        <StatCard title="Total Expenses" amount="$3,335" color="text-rose-600" />
-        <StatCard title="Balance" amount="$2,265" color="text-slate-900" />
-      </div>
-
-      <div className="mt-8 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h3 className="mb-4 font-semibold">Income vs Expenses</h3>
-        <SpendingChart data={chartData} />
-      </div>
-
-      <div className="mt-8 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h3 className="mb-4 font-semibold">Recent Transactions</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="text-slate-500">
-              <tr>
-                <th className="py-2">Title</th>
-                <th className="py-2">Category</th>
-                <th className="py-2">Date</th>
-                <th className="py-2 text-right">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recent.map((t) => (
-                <tr key={t.id} className="border-t border-slate-100">
-                  <td className="py-3">{t.title}</td>
-                  <td className="py-3">{t.category}</td>
-                  <td className="py-3">{t.date}</td>
-                  <td
-                    className={`py-3 text-right font-medium ${
-                      t.type === "income" ? "text-emerald-600" : "text-rose-600"
-                    }`}
-                  >
-                    {t.amount}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+    <div className="mx-auto max-w-6xl space-y-6">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">
+            Welcome back, {firstName}
+          </h2>
+          <p className="text-sm text-slate-500">
+            Here is how your money looks this month.
+          </p>
         </div>
+        <Link
+          href="/transactions"
+          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700"
+        >
+          View transactions
+        </Link>
       </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <StatCard
+          title="Balance"
+          amount={formatMoney(allTime.balance)}
+          icon={Wallet}
+          tone="indigo"
+          hint="All time"
+        />
+        <StatCard
+          title="Income"
+          amount={formatMoney(thisMonth.income)}
+          icon={TrendingUp}
+          tone="green"
+          hint="This month"
+        />
+        <StatCard
+          title="Expenses"
+          amount={formatMoney(thisMonth.expense)}
+          icon={TrendingDown}
+          tone="red"
+          hint="This month"
+        />
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <Card title="Income vs Expenses" className="lg:col-span-2">
+          <SpendingChart data={monthly} />
+        </Card>
+        <Card title="Spending by category">
+          <CategoryChart data={breakdown} />
+        </Card>
+      </div>
+
+      <Card
+        title="Recent transactions"
+        action={
+          <Link
+            href="/transactions"
+            className="text-sm font-medium text-indigo-600 hover:underline"
+          >
+            See all
+          </Link>
+        }
+      >
+        <ul className="divide-y divide-slate-100">
+          {recent.map((t) => (
+            <li key={t.id} className="flex items-center gap-3 py-3">
+              <span
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
+                  t.type === "INCOME"
+                    ? "bg-emerald-100 text-emerald-600"
+                    : "bg-rose-100 text-rose-600"
+                }`}
+              >
+                {t.type === "INCOME" ? (
+                  <ArrowUpRight size={18} />
+                ) : (
+                  <ArrowDownRight size={18} />
+                )}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-medium">{t.title}</p>
+                <p className="truncate text-xs text-slate-500">
+                  {t.category.name} · {formatDate(t.date.toISOString())}
+                </p>
+              </div>
+              <p
+                className={`font-semibold ${
+                  t.type === "INCOME" ? "text-emerald-600" : "text-rose-600"
+                }`}
+              >
+                {t.type === "INCOME" ? "+" : "-"}
+                {formatMoney(Number(t.amount))}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </Card>
     </div>
   );
 }
