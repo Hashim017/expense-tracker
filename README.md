@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ExpenseTracker
 
-## Getting Started
+A full-stack expense tracker. Track income and expenses, see charts and monthly reports. Each user sees only their own data.
 
-First, run the development server:
+## Live demo
 
+**Live site:** https://expense-tracker-hash17.vercel.app/
+
+**Demo login:** `demo@example.com` / `password123`
+
+You can also click **Try demo** on the landing page. It logs you in with one click.
+
+## Features
+
+- Landing page with one-click demo
+- Register, login and logout with secure cookie sessions
+- Each user has a private account and private data
+- Add, edit, delete, search and filter transactions
+- Dashboard with balance, income, expenses and savings rate
+- Area chart and donut chart for income and spending
+- Reports for 3, 6 and 12 months with a month-by-month table
+- Dark theme, works on phone and desktop
+
+## Tech stack
+
+- Next.js (App Router) and TypeScript
+- Tailwind CSS
+- Prisma ORM and PostgreSQL
+- Recharts for charts
+- jose (JWT sessions) and bcryptjs (password hashing)
+- Deployed on Vercel
+
+## Run locally
+
+1. Clone the repo:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+   git clone https://github.com/Hashim017/expense-tracker.git
+   cd expense-tracker
 ```
+2. Install packages:
+```bash
+   npm install
+```
+3. Copy `.env.example` to `.env` and fill in the values.
+4. Create the tables and demo data:
+```bash
+   npx prisma migrate deploy
+   npx prisma db seed
+```
+5. Start the app:
+```bash
+   npm run dev
+```
+6. Open http://localhost:3000
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Name | What it is |
+| --- | --- |
+| `DATABASE_URL` | PostgreSQL connection string |
+| `AUTH_SECRET` | Long random text used to sign sessions |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Author
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Muhammad Hashim - [GitHub](https://github.com/Hashim017)
