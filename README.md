@@ -56,12 +56,6 @@ Expense Tracker helps you see where your money goes. You can log transactions, g
 #### Landing Page - Section 2
 <img src="docs/screenshots/landing-page2.PNG" alt="Landing Page 2" width="600">
 
-#### Landing Page - Section 3
-<img src="docs/screenshots/landing-page3.jpg" alt="Landing Page 2" width="600">
-
-#### Landing Page - Section 4
-<img src="docs/screenshots/landing-page4.jpg" alt="Landing Page 2" width="600">
-
 #### Features
 <img src="docs/screenshots/features.PNG" alt="Features" width="600">
 
