@@ -46,7 +46,7 @@ Expense Tracker helps you see where your money goes. You can log transactions, g
 | Database | PostgreSQL on Neon |
 | ORM | Prisma 6 |
 
-## Screenshots
+## 🖼 Screenshots
 
 ### Landing Page
 
